@@ -40,19 +40,71 @@ if platform !='android':
     Config.remove_option('input','%(name)s')
     print (Config.items('input'))
 
-class LessonListScreen(Screen):
+class LessonGroupScreen(Screen):
     container = ObjectProperty(None)
+    lesson_list_names = []
     def __init__(self,**kwargs):
-        super(LessonListScreen, self).__init__(**kwargs)
+        super(LessonGroupScreen, self).__init__(**kwargs)
         Window.bind(on_keyboard=self.on_key)
         Clock.schedule_once(self.add_buttons,1)
 
     def on_key(self, window, key, *args):
         if key == 27:  # the esc key
-            if self.manager.current == 'lessons' :
+            if self.manager.current == 'lessons':
                 return False
+
     def add_buttons(self,dt):
-        self.list_lessons = data_capture_lessons.get_Lessons()
+        self.list_groups = data_capture_lessons.get_groups()
+        self.container.bind(minimum_height=self.container.setter('height'))
+        for element in self.list_groups:
+            font_name = "Caveat-Bold.ttf"
+            button = Button(text=element[1],font_name=font_name,font_size="50sp",background_color=[0.76,0.83,0.86,0.8],pos_hint={'top': 1},size_hint_y=None,size_hint_x=1)
+            button.on_release = lambda instance=button, a=element[0]: self.switch_to_title(instance, a)
+            self.lesson_list_names.append(element[1])
+            self.container.add_widget(button)
+
+    def switch_to_title(self,i,a):
+
+        self.selected_group = a
+        self.manager.current ="lessons"
+        self.manager.transition.direction = 'left'
+
+    def launch_popup(self):
+        show = ImportPop()
+        self.popupWindow = Popup(title="Import Mini Lesson", content=show,
+                                 size_hint=(1, 0.7), auto_dismiss=False)
+        show.set_popupw(self.popupWindow)
+        show.set_screen_instance(self,self.lesson_list_names)
+        # open popup window
+        self.popupWindow.open()
+
+
+
+
+class LessonListScreen(Screen):
+    container = ObjectProperty(None)
+    def __init__(self,**kwargs):
+        super(LessonListScreen, self).__init__(**kwargs)
+        Window.bind(on_keyboard=self.on_key)
+
+    def on_enter(self, *args):
+        groupid = self.manager.get_screen('groups').selected_group
+
+
+        self.list_lessons = data_capture_lessons.get_Lessons_ofgroup(groupid)
+        self.container.clear_widgets()
+        Clock.schedule_once(self.add_buttons, 1)
+
+    def on_key(self, window, key, *args):
+        if key == 27:  # the esc key
+            if self.manager.current == 'lessons' :
+                self.manager.transition.direction = 'right'
+                self.manager.current = self.manager.previous()
+                return True
+    def add_buttons(self,dt):
+        groupid = self.manager.get_screen('groups').selected_group
+
+        self.list_lessons = data_capture_lessons.get_Lessons_ofgroup(groupid)
         self.container.bind(minimum_height=self.container.setter('height'))
         for element in self.list_lessons:
             if element[2] is None or element[2] == "" or element[2] == "English":
@@ -74,19 +126,17 @@ class LessonListScreen(Screen):
         self.manager.current ="title"
         self.manager.transition.direction = 'left'
 
-    def launch_popup(self):
-        show = ImportPop()
-        self.popupWindow = Popup(title="Import Mini Lesson", content=show,
-                            size_hint=(1, 0.4),auto_dismiss=False)
-        show.set_popupw(self.popupWindow)
-        show.set_screen_instance(self)
-        # open popup window
-        self.popupWindow.open()
+    def set_previous_screen(self):
+        if self.manager.current == 'lessons':
+            self.manager.transition.direction = 'right'
+            self.manager.current = self.manager.previous()
+
+
 
 
     def launch_del_popup(self):
         self.popup_delete = DeletePop()
-        self.popup_delete.set_screen_instance(self)
+        self.popup_delete.set_screen_instance(self,self.manager.get_screen('groups').selected_group)
         # self.popupWindow = Popup(title="Delete Lesson", content=show,
         #                     size_hint=(1, 0.4),auto_dismiss=True)
         # show.set_popupw(self.popupWindow)
@@ -103,7 +153,9 @@ class DeletePop(Popup):
 
     def __init__(self, **kwargs):
         super(DeletePop, self).__init__(**kwargs)
-        lessons = data_capture_lessons.get_Lessons()
+
+    def fill_lesson_list(self):
+        lessons = data_capture_lessons.get_Lessons_ofgroup(self.groupid)
         lessonlistdisplay = []
         for element in lessons:
             lesson_display = str(element[0])+":"+element[1]
@@ -126,8 +178,10 @@ class DeletePop(Popup):
         self.listscreen.add_buttons(1)
 
 
-    def set_screen_instance(self, listscreen):
+    def set_screen_instance(self, listscreen,groupid):
         self.listscreen = listscreen
+        self.groupid = groupid
+        self.fill_lesson_list()
 
 
 
@@ -136,6 +190,8 @@ class ImportPop(BoxLayout):
     text_classid = StringProperty()
     text_lessonid = StringProperty()
     text_status = StringProperty()
+    lesson_groups = ListProperty()
+    selected_group = StringProperty("Group A")
 
     def __init__(self, **kwargs):
 
@@ -174,14 +230,26 @@ class ImportPop(BoxLayout):
 
 
     def next(self, dt):
+        groupid = ""
         if self.call_update.is_alive():
             self.progress_bar.value += 5
         else:
+            if self.selected_group == "Science":
+                groupid = 1
+            elif self.selected_group == "Mathematics":
+                groupid = 2
+            elif self.selected_group == "English":
+                groupid = 3
+            elif self.selected_group == "Social Science":
+                groupid = 4
+            elif self.selected_group == "Languages":
+                groupid = 5
+            elif self.selected_group == "Other Subjects":
+                groupid = 6
+            data_capture_lessons.update_group_id(groupid)
             self.popup.dismiss()
-            self.listscreen.container.clear_widgets()
-            self.listscreen.add_buttons(1)
             self.lesson_import_flag = 0
-            self.popw.dismiss()
+            self.text_status ="Import Completed and the Lesson is added to the "+self.selected_group
             return False
 
 
@@ -192,9 +260,13 @@ class ImportPop(BoxLayout):
     def set_popupw(self,pop):
         self.popw=pop
 
-    def set_screen_instance(self,listscreen):
+    def set_screen_instance(self,listscreen,lessongroups):
         self.listscreen =listscreen
+        self.lesson_groups = lessongroups
+        print(self.lesson_groups)
 
+    def on_select_group(self, group):
+        self.selected_group = group
 
 
 
@@ -669,7 +741,8 @@ class MagicRoomApp(App):
 
     def build(self):
 
-        self.icon = 'lr_logo.png'
+        self.icon = 'logo_bg_small.png'
+        self.title = 'Learning Room'
 
 
         return ScreenManagement()

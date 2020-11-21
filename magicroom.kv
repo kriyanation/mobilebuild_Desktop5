@@ -2,6 +2,9 @@
 # -*- coding:utf8 -*-
 
 <ScreenManagement>:
+    LessonGroupScreen:
+        id:screen0
+        name: 'groups'
     LessonListScreen:
         id:screen1
         name: 'lessons'
@@ -24,8 +27,8 @@
     orientation: 'vertical'
     GridLayout:
         cols:2
-        #row_force_default:True
-        #row_default_height:40
+        row_force_default:True
+        row_default_height:40
         padding:[20,20,20,20]
         spacing:[20,20]
         Label:
@@ -37,8 +40,8 @@
             write_tab: False
             multiline: False
             size_hint_x:0.3
-            size_hint_y:0.04
-            font_size:'50sp'
+            size_hint_y:0.1
+            font_size:'25sp'
 
         Label:
             text:"Class ID"
@@ -50,8 +53,8 @@
             write_tab: False
             multiline: False
             size_hint_x:0.3
-            size_hint_y:0.04
-            font_size:'50sp'
+            size_hint_y:0.1
+            font_size:'25sp'
 
         Label:
             text:"Lesson ID"
@@ -62,10 +65,25 @@
             write_tab: False
             multiline: False
             size_hint_x:0.3
-            size_hint_y:0.04
-            font_size:'50sp'
+            size_hint_y:0.1
+            font_size:'25sp'
 
+        Label:
+            text:"Group"
+            size_hint_x:0.2
 
+        Spinner:
+            id: whatever
+            text: " Other Subjects "
+
+            halign:"left"                              #default value showed
+            text_size:(300, None)
+            values: root.lesson_groups      #list of values to show
+            option_cls: Factory.get("DelSpinnerOption")
+            on_text:
+                root.on_select_group(self.text)
+            background_color:[0.76,0.83,0.86,0.8]
+            font_name:"unifont.ttf"
 
         Button:
             text: 'Submit'
@@ -75,7 +93,7 @@
             background_color:[0.76,0.83,0.86,0.8]
 
         Button:
-            text: 'Cancel'
+            text: 'Close'
             size_hint_x:0.2
             size_hint_y:0.8
             on_release: root.close_pop()
@@ -137,10 +155,7 @@
             background_color:[0.76,0.83,0.86,0.8]
 
 
-
-
-
-<LessonListScreen>
+<LessonGroupScreen>
 
     container: container
     BoxLayout:
@@ -158,6 +173,40 @@
                 ActionButton:
                     text: ' Import Mini Lesson '
                     on_press: root.launch_popup()
+
+
+        ScrollView:
+            size_hint: (1, 1)
+            bar_width: 10
+            bar_color: 1, 0, 0, 1   # red
+            bar_inactive_color: 0, 0, 1, 1   # blue
+            effect_cls: "ScrollEffect"
+            scroll_type: ['bars']
+            effect_cls: "ScrollEffect"
+            BoxLayout:
+                id: container
+                orientation: 'vertical'
+                size_hint_y:None
+
+
+<LessonListScreen>
+
+    container: container
+    BoxLayout:
+        orientation: 'vertical'
+        ActionBar:
+            pos_hint: {'top':1}
+
+            ActionView:
+                use_separator: True
+
+
+                ActionPrevious:
+                    with_previous: True
+                    on_release: root.set_previous_screen()
+                    app_icon: "logo_bg_small.png"
+
+
                 ActionOverflow:
                     ActionButton:
                         text: ' Delete '
@@ -170,11 +219,11 @@
             #size_hint: (1, None)
             #size:(800,850)
             size_hint: (1, 1)
-            #bar_width: 10
-            #bar_color: 1, 0, 0, 1   # red
-            #bar_inactive_color: 0, 0, 1, 1   # blue
+            bar_width: 10
+            bar_color: 1, 0, 0, 1   # red
+            bar_inactive_color: 0, 0, 1, 1   # blue
             effect_cls: "ScrollEffect"
-            #scroll_type: ['bars']
+            scroll_type: ['bars']
 
             BoxLayout:
                 id: container
@@ -220,7 +269,11 @@
             ScrollView:
                 id: scrlv
                 size_hint:(1,0.3)
-
+                bar_width: 10
+                bar_color: 1, 0, 0, 1   # red
+                bar_inactive_color: 0, 0, 1, 1   # blue
+                effect_cls: "ScrollEffect"
+                scroll_type: ['bars']
                 #TextInput:
                 Label:
                     #size_hint:(1,None)
@@ -292,6 +345,11 @@
 
             ScrollView:
                 size_hint:(1,0.4)
+                bar_width: 10
+                bar_color: 1, 0, 0, 1   # red
+                bar_inactive_color: 0, 0, 1, 1   # blue
+                effect_cls: "ScrollEffect"
+                scroll_type: ['bars']
                 Label:
                     #size_hint:(1,0.3)
                     font_name:root.font_name
@@ -339,6 +397,11 @@
             ScrollView:
                 id: scrlv1
                 size_hint: (1, 1)
+                bar_width: 10
+                bar_color: 1, 0, 0, 1   # red
+                bar_inactive_color: 0, 0, 1, 1   # blue
+                effect_cls: "ScrollEffect"
+                scroll_type: ['bars']
                 BoxLayout:
                     orientation:'vertical'
                     pos_hint: {'top': 1}
@@ -422,6 +485,7 @@
                 ActionPrevious:
                     with_previous: True
                     on_release: root.set_previous_screen()
+                    app_icon: "logo_bg_small.png"
 
                 ActionButton:
                     text: ' Next '
@@ -466,6 +530,12 @@
         ScrollView:
 
             size_hint:(1,0.7)
+            size_hint:(1,0.7)
+            bar_width: 10
+            bar_color: 1, 0, 0, 1   # red
+            bar_inactive_color: 0, 0, 1, 1   # blue
+            effect_cls: "ScrollEffect"
+            scroll_type: ['bars']
             Label:
                 #size_hint:(1,0.3)
                 text:root.text_label_1
@@ -476,6 +546,12 @@
                 halign:"left"
                 valign:"top"
                 size_hint_y: None
+                bar_width: 10
+                bar_color: 1, 0, 0, 1   # red
+                bar_inactive_color: 0, 0, 1, 1   # blue
+                effect_cls: "ScrollEffect"
+                scroll_type: ['bars']
+
 
 
 
@@ -505,6 +581,11 @@
             padding:[20,20,20,20]
             id: scrlv
             size_hint:(1,0.5)
+            bar_width: 10
+            bar_color: 1, 0, 0, 1   # red
+            bar_inactive_color: 0, 0, 1, 1   # blue
+            effect_cls: "ScrollEffect"
+            scroll_type: ['bars']
             TextInput:
                 id:txt
                 size_hint:(1,None)
@@ -521,6 +602,11 @@
         ScrollView:
             id: scrlv1
             size_hint:(1,0.5)
+            bar_width: 10
+            bar_color: 1, 0, 0, 1   # red
+            bar_inactive_color: 0, 0, 1, 1   # blue
+            effect_cls: "ScrollEffect"
+            scroll_type: ['bars']
             Label:
                 size_hint:(1,None)
                 text:root.text_label_1

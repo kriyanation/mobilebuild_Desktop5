@@ -73,14 +73,26 @@ def update_lesson_details(json_object):
     whiteboard_image = json_object["whiteboard_image"]
     if whiteboard_image is not None:
         whiteboard_filename = constructfilename(whiteboard_image, "whiteboard")
-    json_object["title_description"] = json_object["title_description"].replace("~", "\n")
-    json_object["term1_description"] = json_object["term1_description"].replace("~", "\n")
-    json_object["term1_description"] = json_object["term1_description"].replace("~", "\n")
-    json_object["term2_description"] = json_object["term2_description"].replace("~", "\n")
-    json_object["term3_description"] = json_object["term3_description"].replace("~", "\n")
-    json_object["questions"] = json_object["questions"].replace("~", "\n")
-    json_object["title_video"] = ""
-    json_object["application_video_running_notes"] = json_object["application_video_running_notes"].replace("~", "\n")
+
+
+    json_object["title_description"] = make_data_ready(json_object["title_description"])
+    json_object["term1_description"] = make_data_ready(json_object["term1_description"])
+    json_object["term2_description"] = make_data_ready(json_object["term2_description"])
+    json_object["term3_description"] = make_data_ready(json_object["term3_description"])
+    json_object["term1"] = make_data_ready(json_object["term1"])
+    json_object["term2"] = make_data_ready(json_object["term2"])
+    json_object["term3"] = make_data_ready(json_object["term3"])
+    json_object["questions"] = make_data_ready(json_object["questions"])
+    json_object["application_video_running_notes"] = make_data_ready(json_object["application_video_running_notes"])
+    json_object["title"] = make_data_ready(json_object["title"])
+    json_object["step1_description"] = make_data_ready(json_object["step1_description"])
+    json_object["step2_description"] = make_data_ready(json_object["step2_description"])
+    json_object["step3_description"] = make_data_ready(json_object["step3_description"])
+    json_object["step4_description"] = make_data_ready(json_object["step4_description"])
+    json_object["step5_description"] = make_data_ready(json_object["step5_description"])
+    json_object["step6_description"] = make_data_ready(json_object["step6_description"])
+    json_object["step7_description"] = make_data_ready(json_object["step7_description"])
+    json_object["step8_description"] = make_data_ready(json_object["step8_description"])
     query_parameters = [json_object["title"],title_filename,json_object["title_video"],json_object["title_description"],
                         json_object["term1"],json_object["term1_description"],term1_filename,json_object["term2"],json_object["term2_description"],term2_filename,
                         json_object["term3"],json_object["term3_description"],term3_filename,json_object["number_of_steps"],json_object["step1_description"],step1_filename,json_object["step2_description"],step2_filename,
@@ -107,6 +119,12 @@ def update_lesson_details(json_object):
         traceback.print_exc()
         print("Wondersky: Error while creating directories")
         return 198
+
+def make_data_ready(text):
+    data_ready_string = text.replace("~","\n")
+    data_ready_string = data_ready_string.replace("|","\"")
+    return data_ready_string
+
 def constructfilename(fileurl,prefix):
     try:
         file_dl = fileurl.split("?", 2)
