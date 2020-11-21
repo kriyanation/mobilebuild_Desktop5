@@ -176,7 +176,7 @@ def get_description_list(lessonid):
         return rows
     except sqlite3.OperationalError:
         traceback.print_exc()
-
+#changes
 def get_step_image_list(lessonid):
     try:
         connection = sqlite3.connect(db)
