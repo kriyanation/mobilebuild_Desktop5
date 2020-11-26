@@ -249,7 +249,7 @@ class ImportPop(BoxLayout):
             data_capture_lessons.update_group_id(groupid)
             self.popup.dismiss()
             self.lesson_import_flag = 0
-            self.text_status ="Import Completed and the Lesson is added to the "+self.selected_group
+            self.text_status ="Import Completed and the Lesson is added to the group "+self.selected_group
             return False
 
 
@@ -686,7 +686,7 @@ class LessonAssessScreen(Screen):
             self.text_label_1, self.text_label_2 = data_capture_lessons.get_questions_answer(self.lessonid)
             self.formlink = data_capture_lessons.get_formlink(self.lessonid)
             if self.formlink is not None and self.formlink != "" and hasattr(self,"form_button") == False:
-                self.form_button = Button(text="launch",size_hint=(1,0.1),background_color = [0.76,0.83,0.86,0.8],
+                self.form_button = Button(text="Launch External Link",size_hint=(1,0.1),background_color = [0.76,0.83,0.86,0.8],
                                           on_release = self.launch_form)
                 self.ids.assess.add_widget(self.form_button)
         def launch_form(self,*args):
@@ -710,7 +710,7 @@ class LessonAssessScreen(Screen):
         def set_next_screen(self):
             if self.manager.current == 'assess':
                 self.manager.transition.direction = 'left'
-                self.manager.current = 'lessons'
+                self.manager.current = 'groups'
 
         def set_previous_screen(self):
             if self.manager.current == 'assess':
