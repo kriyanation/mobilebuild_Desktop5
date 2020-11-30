@@ -485,7 +485,7 @@ class LessonApplyScreen(Screen):
         if key == 27:  # the esc key
             if self.manager.current == 'apply' :
                 self.manager.transition.direction = 'right'
-                self.manager.current = 'factual'
+                self.manager.current = 'notes'
                 return True
 
 
@@ -620,7 +620,7 @@ class LessonWhiteboardScreen(Screen):
         if key == 27:  # the esc key
             if self.manager.current == 'whiteboard':
                 self.manager.transition.direction = 'right'
-                self.manager.current = 'apply'
+                self.manager.current = 'factual'
                 return True
 
 class LessonNotesScreen(Screen):
@@ -635,7 +635,7 @@ class LessonNotesScreen(Screen):
         if key == 27:  # the esc key
             if self.manager.current == 'notes':
                 self.manager.transition.direction = 'right'
-                self.manager.current = 'apply'
+                self.manager.current = 'whiteboard'
                 return True
 
     def on_enter(self):
@@ -651,7 +651,7 @@ class LessonNotesScreen(Screen):
     def set_next_screen(self):
         if self.manager.current == 'notes':
             self.manager.transition.direction = 'left'
-            self.manager.current = 'assess'
+            self.manager.current = 'apply'
 
     def set_previous_screen(self):
         if self.manager.current == 'notes':
@@ -715,7 +715,7 @@ class LessonAssessScreen(Screen):
         def set_previous_screen(self):
             if self.manager.current == 'assess':
                 self.manager.transition.direction = 'right'
-                self.manager.current = 'notes'
+                self.manager.current = 'apply'
 
 
 
